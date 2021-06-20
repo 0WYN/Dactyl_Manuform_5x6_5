@@ -3,36 +3,39 @@
 
 ![DACTYL_MANUFORM](https://i.imgur.com/Wu5byPh.jpeg)
 
-The Dactyl Manuform is a 3d printed, handwired keyboard running QMK Firmware on a Pro Micro controller.
+The Dactyl Manuform is a 3D printed handwired keyboard running QMK Firmware on a Pro Micro controller. Here is a build log of how to make one:
 
-I suggest printing the case using a 0.4 mm nozzle, supports are needed and I suggest the 'tree' style of supports to conserve material and aid in the ease of removal.
+Print the case using a 0.4 mm nozzle - supports are needed - I suggest the 'tree' style of supports to conserve material and aid in ease of removal.
 
 | ![](https://i.imgur.com/yl66v7f.jpegg) | ![](https://i.imgur.com/qCnb8ht.jpeg) |![](https://i.imgur.com/YfCkNEn.jpeg) |
 |-----------------------------|------------------------------|------------------------------|
 
-Hot glue was used to secure the switches and also ensure they don't make a rattling sound. Soldering iron used to press in the brass inserts (above).
+Depending on the tolerances of your printer, you may want to use hot glue to secure the switches and ensure they don't make a rattling sound. Press in the brass inserts with a soldering iron.
 
 
 # Handwiring guide
 
-Once the switches are secure it's time for soldering. First the Amoeba PCBs need their diodes secured, then solder to the switches. Once there's an Amoeba PCB on each switch connect the rows and columns according to [this wiring diagram](https://miro.medium.com/max/1050/1*Q7xYKNrfMr8au7zUipBlGg.jpeg). (colour coded columns on my unit)
+Once the switches are secure - it's time for soldering. First secure the diodes on the Amoeba PCBs, then solder to the switches. Once there's an Amoeba PCB on each switch, connect the rows and columns according to [this wiring diagram](https://miro.medium.com/max/1050/1*Q7xYKNrfMr8au7zUipBlGg.jpeg). (colour coded columns on my unit)
 
 | ![](https://i.imgur.com/FbVfrDT.jpeg) 	| ![](https://i.imgur.com/bqOUol5.jpeg) 	| ![](https://i.imgur.com/gHkgkrK.jpeg) 	|
 |-----------------------------|------------------------------|------------------------------|
 
-It's a good idea to flash the Pro Micro before soldering to ensure it is functional before hand. Then cut each wire to the length required to reach each row or column, and solder into the unit. (Again referring to the wiring guide above)
+Flash the Pro Micro before soldering to ensure it is functional beforehand (my configuration files included in the repo and flashing instructions below). Then cut each wire to the length required to reach each row or column and solder into the unit. (Again referring to the wiring guide above)
 | ![](https://i.imgur.com/SU8jQuO.jpeg) 	| ![](https://i.imgur.com/dcodaNX.jpeg) 	| ![](https://i.imgur.com/uDrDyCO.jpeg) 	|
 |-----------------------------|------------------------------|------------------------------|
 
-USB micro B male to USB-C female adaptor cable to connect from Pro Micro to the back of the unit. However, they were not readily available so I improvised and made my own.
-| ![](https://i.imgur.com/sLyY97a.jpeg) 	| ![](https://i.imgur.com/1TAhQcg.jpeg) 	| ![](https://i.imgur.com/qihBNyZ.jpeg) 	|
+You need to connect from Pro Micro to the back of the unit with a USB Micro male to USB-C female adaptor cable.  Unfortunely they are not readily available, so I improvised and made my own!
+| ![](https://i.imgur.com/sLyY97a.jpeg) 	| ![](https://i.imgur.com/1TAhQcg.jpeg) 	| ![](https://i.imgur.com/K7jOM31.jpeg) 	|
 |-----------------------------|------------------------------|------------------------------|
+
+USB Micro 2.0 to USB-C daughterboard pinout as follows:
 
     BLACK   GREEN   WHITE   RED
     G       D+      D-      V
 
-Then it is just a case of connecting any jumper wires to their corrosponding pins on the micro controller(Such as the pins going to the TRRS jack for I2C connection), and hot glueing the TRRS jack and USB-C port into their corrosponding holes. 
-(Optional) Connect a momentary switch to RST + GRD pins on the Pro Micro for flashing in the future.
+Then it is just a case of connecting any jumper wires to their corrosponding pins on the micro controller (Such as the pins going to the TRRS jack for I2C connection). Finally hot glue the TRRS jack and USB-C port into their corrosponding holes.
+
+(Optional extra) Connect a momentary switch to the RST + GRD pins on the Pro Micro for flashing in the future.
 
 ![](https://i.imgur.com/N6MZnGv.jpeg)
 # Bill Of Materials
@@ -46,8 +49,7 @@ Then it is just a case of connecting any jumper wires to their corrosponding pin
 * 2 x Reset switch
 * 10 x M3x5 countersunk screws to attach base plates
 * 10 x M3 Brass threaded inserts
-* 4 x M3x10(13mm overall length, 5.5mm diameter head) allen head screws that go through the bottom plate (tme.eu [link](https://www.tme.eu/ro/en/details/m3x10_d912-a2/bolts/kraftberg/))
-* hot glue for securing the pro micro to the bottom case(optional, but recommended)
+* hot glue for securing the pro micro to the case (optional, but recommended)
 
 # Pin assignment
 
@@ -63,12 +65,13 @@ Then it is just a case of connecting any jumper wires to their corrosponding pin
     D0 + VCC + GRD
 
 
-# QMK Firmware
+# QMK Firmware Flashing
+After configuring your QMK environment according to [the QMK setup procedure](https://beta.docs.qmk.fm/tutorial/newbs_getting_started) and downloading my configuration from this repo you can flash the Pro Micro with this command:
 
     qmk flash -kb handwired/dactyl_manuform/5x6_5 -km 0WYN
 
 # Flashing EE_HANDS eeproms from /qmk_firmware/quantum/split_common
-This allows the use of each side individually through USB, otherwise the right side thinks it is the left but with a flipped matrix.
+This allows the use of each side individually through USB, otherwise the right side thinks it is a left but with a flipped matrix.
 
     avrdude -p atmega32u4 -P /dev/tty[YOUR_DEVICE] avr109 -U eeprom:w:eeprom-righthand.eep
     avrdude -p atmega32u4 -P /dev/tty[YOUR_DEVICE] avr109 -U eeprom:w:eeprom-lefthand.eep
